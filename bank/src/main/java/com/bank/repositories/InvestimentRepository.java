@@ -18,7 +18,7 @@ public class InvestimentRepository {
     private final List<Investiment> investiments = new ArrayList<>();
     private final List<InvestimentWallet> wallets = new ArrayList<>();
 
-    public Investiment create(final long tax, final long daysToRescue,final long initialFunds){
+    public Investiment create(final long tax,final long initialFunds){
         this.nextId ++;
         var investiment = new Investiment(this.nextId, tax, initialFunds);
         investiments.add(investiment);
@@ -61,8 +61,8 @@ public class InvestimentRepository {
 
     }
 
-    public void updateAmount(final long percent){
-        wallets.forEach(w -> w.updateAmount(percent));
+    public void updateAmount(){
+        wallets.forEach(w -> w.updateAmount(w.getInvestiment().tax()));
     }
 
     public Investiment findById(final long id){

@@ -4,8 +4,14 @@ import com.bank.exception.AccountNotFoundException;
 import com.bank.exception.PixInUseException;
 import com.bank.models.AccountWallet;
 import com.bank.models.BankService;
+import com.bank.models.InvestimentWallet;
+import com.bank.models.MoneyAudit;
 
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.bank.repositories.CommonsRepository.checkFundsForTransaction;
 
@@ -55,4 +61,17 @@ public class AccountRepository {
                 .findFirst()
                 .orElseThrow(()-> new AccountNotFoundException("A conta com chave pix: "+pix+" nao existe ou foi encerrada"));
     }
+
+    public List<AccountWallet> list(){
+        return this.accounts;
+    }
+
+    public Map<OffsetDateTime, List<MoneyAudit>> getHistory(final String pix){
+        var wallet = findByPix(pix);
+        var audit = wallet.getFinancialTransactions();
+        return audit.stream()
+                .collect(Collectors.groupingBy(t -> t.createdAt()
+                        .truncatedTo(ChronoUnit.SECONDS)));
+    }
+
 }
